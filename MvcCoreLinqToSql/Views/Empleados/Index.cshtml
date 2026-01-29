@@ -1,0 +1,34 @@
+﻿@model List<Empleado>
+
+    <h1>Lista de Empleados</h1>
+
+<table class="table table-hover table-striped align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col" class="text-center">ID</th>
+            <th scope="col">Apellido</th>
+            <th scope="col">Oficio</th>
+            <th scope="col" class="text-end">Salario</th>
+            <th scope="col" class="text-center">Departamento</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Empleado empleado in Model)
+        {
+            <tr>
+                <td class="text-center fw-bold text-muted">@empleado.IdEmpleado</td>
+                <td>@empleado.Apellido</td>
+                <td>
+                    <span class="badge rounded-pill bg-info text-dark">
+                        @empleado.Oficio
+                    </span>
+                </td>
+                <td class="text-end">@empleado.Salario.ToString("C")</td>
+                <td class="text-center">@empleado.IdDepartamento</td>
+                <td>
+                    <a asp-controller="Empleados" asp-action="Details" asp-route-id="@empleado.IdEmpleado" class="btn btn-info">Detalles</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
