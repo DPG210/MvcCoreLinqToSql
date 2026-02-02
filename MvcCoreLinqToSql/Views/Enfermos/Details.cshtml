@@ -1,0 +1,26 @@
+﻿@model Enfermo
+
+
+@if(Model != null)
+{
+    <label>Inscripcion</label>
+    <input type="text" value="@Model.Inscripcion" class="form-check form-control" />
+    <br />
+    <label>Apelldio</label>
+    <input type="text" value="@Model.Apellido" class="form-check form-control" />
+    <br />
+    <label>Direccion</label>
+    <input type="text" value="@Model.Direccion" class="form-check form-control" />
+    <br />
+    <label>Fecha</label>
+    <input type="text" value="@Model.FechaNacimiento" class="form-check form-control" />
+    <br />
+    <label>S</label>
+    <input type="text" value="@Model.S" class="form-check form-control" />
+    <br />
+    <label>NSS</label>
+    <input type="text" value="@Model.NSS" class="form-check form-control" />
+    <br />
+}
+
+<a asp-controller="Enfermos" asp-action="Index">Back Home</a>

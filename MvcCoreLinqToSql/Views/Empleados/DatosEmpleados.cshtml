@@ -1,0 +1,62 @@
+﻿@model ResumenEmpleados
+@* @{
+    List<string> oficiosList = (List<string>)ViewData["Oficios"];
+} *@
+@{
+    List<string> oficiosList = ViewData["oficios"] as List<string>;
+}
+<h1>Lambda Linq Empleados</h1>
+
+<form method="post">
+    <label>Oficio:</label>
+    <select name="oficio" class="form-check form-control">
+        @foreach(string ofi in oficiosList)
+            {
+                <option>@ofi</option>
+            }
+    </select>
+    <button class="btn btn-outline-primary">Buscar empleados</button>
+</form>
+
+@if(Model != null)
+{
+    <ul class="list-group">
+        <li class="list-group-item">
+            Personas: @Model.Personas
+        </li>
+        <li class="list-group-item">
+            Maximo salario: @Model.MaximoSalario
+        </li>
+        <li class="list-group-item">
+            Media salarial: @Model.MediaSalarial
+        </li>
+    </ul>
+    @if(Model.Empleados != null)
+    {
+        <table class="table table-active">
+            <thead>
+                <tr>
+                    <th>Apellido</th>
+                    <th>Oficio</th>
+                    <th>Salario</th>
+                    <th>Departamento</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Empleado empleado in Model.Empleados)
+                {
+                    <tr>
+                        <td>@empleado.Apellido</td>
+                        <td>@empleado.Oficio</td>
+                        <td>@empleado.Salario</td>
+                        <td>@empleado.IdDepartamento</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h2 style="color:blue"> No existen empleados</h2>
+    }
+}

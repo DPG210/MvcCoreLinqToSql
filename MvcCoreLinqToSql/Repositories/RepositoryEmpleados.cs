@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using MvcCoreLinqToSql.Models;
 using System.Data;
+using System.Security.Cryptography;
 
 namespace MvcCoreLinqToSql.Repositories
 {
@@ -64,6 +65,91 @@ namespace MvcCoreLinqToSql.Repositories
             empleado.Salario = row.Field<int>("SALARIO");
             empleado.IdDepartamento = row.Field<int>("DEPT_NO");
             return empleado;
+        }
+
+        public List<Empleado> GetEmpleadoOficioSalario(string oficio, int salario)
+        {
+            var consulta = from datos in this.tablaEmpleados.AsEnumerable()
+                           where datos.Field<string>("OFICIO") == oficio && datos.Field<int>("SALARIO") >= salario select datos;
+            if (consulta.Count() == 0)
+            {
+                //SIEMPRE DEVOLVEMOS NULL
+                return null;
+            }
+            else
+            {
+                List<Empleado> empleados = new List<Empleado>();
+                foreach (var row in consulta)
+                {
+                    Empleado emp = new Empleado
+                    {
+                        IdEmpleado = row.Field<int>("EMP_NO"),
+                        Apellido = row.Field<string>("APELLIDO"),
+                        Oficio = row.Field<string>("OFICIO"),
+                        Salario = row.Field<int>("salario"),
+                        IdDepartamento = row.Field<int>("dept_no")
+                    };
+                    empleados.Add(emp);
+                }
+
+                return empleados;
+            }
+        }
+         
+        public ResumenEmpleados GetEmpleadosOficio(string oficio)
+        {
+            var consulta = from datos in this.tablaEmpleados.AsEnumerable()
+                           where datos.Field<string>("oficio") == oficio
+                           //orderby datos.Field<string>("oficio")
+                           select datos;
+            //SI NO EXISTEN REGISTROS, DEBEMOS CONTROLARLO
+            //QUIERO ORDENAR EMPLEADOS POR SU SALARIO
+            if (consulta.Count() == 0)
+            {
+                //VALORES NEUTROS
+                ResumenEmpleados model = new ResumenEmpleados();
+                model.Empleados = null;
+                model.MaximoSalario = 0;
+                model.MediaSalarial = 0;
+                model.Personas = 0;
+                return model;
+            }
+            else
+            {
+                consulta = consulta.OrderBy(z => z.Field<int>("salario"));
+                int personas = consulta.Count();
+                int maximo = consulta.Max(x => x.Field<int>("salario"));
+                double media = consulta.Average(x => x.Field<int>("salario"));
+                List<Empleado> empleados = new List<Empleado>();
+                foreach (var row in consulta)
+                {
+                    Empleado emp = new Empleado
+                    {
+                        IdEmpleado = row.Field<int>("EMP_NO"),
+                        Apellido = row.Field<string>("APELLIDO"),
+                        Oficio = row.Field<string>("OFICIO"),
+                        Salario = row.Field<int>("salario"),
+                        IdDepartamento = row.Field<int>("dept_no")
+                    };
+                    empleados.Add(emp);
+                }
+                ResumenEmpleados model = new ResumenEmpleados();
+                model.Empleados = empleados;
+                model.MaximoSalario = maximo;
+                model.MediaSalarial = media;
+                model.Personas = personas;
+                return model;
+            }
+              
+        }
+
+        public List<string> GetOficios()
+        {
+            var consulta = (from datos in this.tablaEmpleados.AsEnumerable() 
+                           select datos.Field<string>("oficio")).Distinct();
+            //AHORA MISMO YA TENEMOS LO QUE NECESITAMOS, UN CONJUNTO DE STRING
+            //LA NORMAL SUELE SER DEVOLVER LA COLECCION GENERICA List<T>
+            return consulta.ToList();
         }
     }
 }
